@@ -35,6 +35,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 4. **Banco de Dados**
+
    Migrations:
    Para criar as tabelas no banco de dados, execute:
 
@@ -50,6 +51,7 @@ php artisan import:csv app/public/rodovias.csv
 php artisan import:csv app/public/uf.csv
 
 6. **Executando o Projeto**
+
    Servidor de Desenvolvimento:
    Para iniciar o servidor Laravel:
    php artisan serve
