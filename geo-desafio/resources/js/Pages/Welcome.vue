@@ -196,8 +196,6 @@ export default {
             geoJson: null,
             rodovias: [],
             trechos: [],
-            paginaAtual: 1,
-            itensPorPagina: 3,
             map: null,
         };
     },
@@ -221,24 +219,17 @@ export default {
                 .post("/api/buscar-dados", this.form)
                 .then((response) => {
                     console.log("Dados recebidos:", response.data);
+                    this.buscarTrechosRegistrados();
 
                     if (
                         Array.isArray(response.data) &&
                         response.data.length > 0
                     ) {
-                        const firstCoord = response.data[0][0];
-                        const lastCoordArray =
-                            response.data[response.data.length - 1];
-                        const lastCoord =
-                            lastCoordArray[lastCoordArray.length - 1];
+                        const allCoords = response.data.flat();
 
-                        console.log("Primeira coordenada:", firstCoord);
-                        console.log("Última coordenada:", lastCoord);
+                        console.log("Coordenadas processadas:", allCoords);
 
-                        this.geoJson = this.createGeoJSON(
-                            firstCoord,
-                            lastCoord
-                        );
+                        this.geoJson = this.createGeoJSON(allCoords);
                         console.log("GeoJSON convertido:", this.geoJson);
 
                         if (
@@ -253,6 +244,15 @@ export default {
                     } else {
                         console.error("Dados inválidos recebidos da API");
                     }
+
+                    this.form = {
+                        dataReferencia: "",
+                        unidadeFederativa: "",
+                        rodovia: "",
+                        tipoDeTrecho: "",
+                        kmInicial: "",
+                        kmFinal: "",
+                    };
                 })
                 .catch((error) => {
                     console.error("Erro na requisição do Geo:", error.response);
@@ -270,7 +270,7 @@ export default {
                 });
         },
 
-        createGeoJSON(firstCoord, lastCoord) {
+        createGeoJSON(coordinates) {
             return {
                 type: "FeatureCollection",
                 features: [
@@ -281,7 +281,7 @@ export default {
                         },
                         geometry: {
                             type: "LineString",
-                            coordinates: [firstCoord, lastCoord],
+                            coordinates: coordinates,
                         },
                     },
                 ],
