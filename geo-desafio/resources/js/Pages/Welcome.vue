@@ -49,7 +49,7 @@
                                 Selecione uma Rodovia
                             </option>
                             <option
-                                v-for="rodovia in rodovias"
+                                v-for="rodovia in rodoviasUnicas"
                                 :key="rodovia.id"
                                 :value="rodovia.rodovia"
                             >
@@ -101,6 +101,7 @@
                     <button
                         type="submit"
                         class="btn btn-primary col-sm-12 col-md-12 col-lg-12"
+                        :disabled="!verificarFormulario"
                     >
                         Buscar
                     </button>
@@ -156,7 +157,7 @@
         </div>
     </section>
 
-    <section class="resultado">
+    <section class="resultado mb-5">
         <div class="container">
             <div class="row">
                 <!-- {{ geoJson }} -->
@@ -186,6 +187,7 @@ export default {
     data() {
         return {
             form: {
+                id: "",
                 dataReferencia: "",
                 unidadeFederativa: "",
                 rodovia: "",
@@ -198,6 +200,25 @@ export default {
             trechos: [],
             map: null,
         };
+    },
+    computed: {
+        rodoviasUnicas() {
+            return this.rodovias.filter(
+                (rodovia, index, self) =>
+                    index ===
+                    self.findIndex((r) => r.rodovia === rodovia.rodovia)
+            );
+        },
+        verificarFormulario() {
+            return (
+                this.form.dataReferencia &&
+                this.form.unidadeFederativa &&
+                this.form.rodovia &&
+                this.form.tipoDeTrecho &&
+                this.form.kmInicial &&
+                this.form.kmFinal
+            );
+        },
     },
     methods: {
         buscarTrechosRegistrados() {
@@ -215,48 +236,57 @@ export default {
                 });
         },
         buscar() {
-            axios
-                .post("/api/buscar-dados", this.form)
-                .then((response) => {
-                    console.log("Dados recebidos:", response.data);
-                    this.buscarTrechosRegistrados();
-
-                    if (
-                        Array.isArray(response.data) &&
-                        response.data.length > 0
-                    ) {
-                        const allCoords = response.data.flat();
-
-                        console.log("Coordenadas processadas:", allCoords);
-
-                        this.geoJson = this.createGeoJSON(allCoords);
-                        console.log("GeoJSON convertido:", this.geoJson);
+            if (this.verificarFormulario) {
+                axios
+                    .post("/api/buscar-dados", this.form)
+                    .then((response) => {
+                        console.log("Dados recebidos:", response.data);
+                        this.buscarTrechosRegistrados();
 
                         if (
-                            this.geoJson &&
-                            this.geoJson.features &&
-                            this.geoJson.features.length > 0
+                            Array.isArray(response.data) &&
+                            response.data.length > 0
                         ) {
-                            this.updateMap();
-                        } else {
-                            console.error("GeoJSON inválido ou vazio");
-                        }
-                    } else {
-                        console.error("Dados inválidos recebidos da API");
-                    }
+                            const allCoords = response.data.flat();
 
-                    this.form = {
-                        dataReferencia: "",
-                        unidadeFederativa: "",
-                        rodovia: "",
-                        tipoDeTrecho: "",
-                        kmInicial: "",
-                        kmFinal: "",
-                    };
-                })
-                .catch((error) => {
-                    console.error("Erro na requisição do Geo:", error.response);
-                });
+                            console.log("Coordenadas processadas:", allCoords);
+
+                            this.geoJson = this.criarGeoJSON(allCoords);
+                            console.log("GeoJSON convertido:", this.geoJson);
+
+                            if (
+                                this.geoJson &&
+                                this.geoJson.features &&
+                                this.geoJson.features.length > 0
+                            ) {
+                                this.atualizarMapa();
+                            } else {
+                                console.error("GeoJSON inválido ou vazio");
+                            }
+                        } else {
+                            console.error("Dados inválidos recebidos da API");
+                        }
+
+                        this.form = {
+                            dataReferencia: "",
+                            unidadeFederativa: "",
+                            rodovia: "",
+                            tipoDeTrecho: "",
+                            kmInicial: "",
+                            kmFinal: "",
+                        };
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Erro na requisição do Geo:",
+                            error.response
+                        );
+
+                        alert(
+                            "Não existem informações sobre esse trajeto. Tente outro."
+                        );
+                    });
+            }
         },
 
         carregarRodovias() {
@@ -270,7 +300,7 @@ export default {
                 });
         },
 
-        createGeoJSON(coordinates) {
+        criarGeoJSON(coordinates) {
             return {
                 type: "FeatureCollection",
                 features: [
@@ -288,7 +318,26 @@ export default {
             };
         },
 
-        updateMap() {
+        confirmarExclusao(id) {
+            if (confirm("Tem certeza que deseja excluir este trecho?")) {
+                axios
+                    .delete(`/api/trechos/${id}`)
+                    .then((response) => {
+                        alert("Trecho excluído com sucesso!");
+                        this.trechos = this.trechos.filter((t) => t.id !== id);
+                        this.atualizarMapa();
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Erro ao excluir o trecho:",
+                            error.response
+                        );
+                        alert("Erro ao excluir o trecho.");
+                    });
+            }
+        },
+
+        atualizarMapa() {
             if (!this.map) {
                 this.map = L.map("map").setView([0, 0], 13);
                 L.tileLayer(
@@ -337,24 +386,6 @@ export default {
             const mes = (novaData.getMonth() + 1).toString().padStart(2, "0");
             const dia = novaData.getDate().toString().padStart(2, "0");
             return `${dia}-${mes}-${ano}`;
-        },
-
-        confirmarExclusao(id) {
-            if (confirm("Tem certeza que deseja excluir este trecho?")) {
-                axios
-                    .delete(`/api/trechos/${id}`)
-                    .then((response) => {
-                        alert("Trecho excluído com sucesso!");
-                        this.trechos = this.trechos.filter((t) => t.id !== id);
-                    })
-                    .catch((error) => {
-                        console.error(
-                            "Erro ao excluir o trecho:",
-                            error.response
-                        );
-                        alert("Erro ao excluir o trecho.");
-                    });
-            }
         },
     },
     props: {
