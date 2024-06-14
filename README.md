@@ -26,35 +26,41 @@ Antes de iniciar, certifique-se de ter instalado em seu sistema:
 
 3. **Configuração do Ambiente:**
    Configure o arquivo .env na raiz do projeto com as informações do seu banco de dados:
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=desafio3
-DB_USERNAME=root
-DB_PASSWORD=
+    ```sh
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=desafio3
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
 4. **Banco de Dados**
 
    Migrations:
    Para criar as tabelas no banco de dados, execute:
-
-php artisan migrate
+    ```sh
+    php artisan migrate
+    ```
 
 5. **Importar Dados CSV:**
    Antes de importar dados de arquivos CSV, instale a biblioteca league/csv:
    composer require league/csv
 
-Em seguida, execute os comandos para importar os dados para o banco de dados:
-
-php artisan import:csv app/public/rodovias.csv
-php artisan import:csv app/public/uf.csv
-
+    Em seguida, execute os comandos para importar os dados para o banco de dados:
+    ```sh
+    php artisan import:csv app/public/rodovias.csv
+    php artisan import:csv app/public/uf.csv
+    ```
 6. **Executando o Projeto**
 
    Servidor de Desenvolvimento:
    Para iniciar o servidor Laravel:
+   ```sh
    php artisan serve
+    ```
    Em um outro terminal, inicie o servidor Vue.js
+   ```sh
    npm run dev
+    ```
    Acesse a URL fornecida pelo comando php artisan serve para visualizar o projeto.
