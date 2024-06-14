@@ -45,15 +45,11 @@ Antes de iniciar, certifique-se de ter instalado em seu sistema:
     ```
 
 5. **Importar Dados CSV:**
-   Antes de importar dados de arquivos CSV, instale a biblioteca league/csv:
+6. 
+    Execute os comandos para importar os dados para o banco de dados:
     ```sh
-   composer require league/csv
-    ```
-
-    Em seguida, execute os comandos para importar os dados para o banco de dados:
-    ```sh
-    php artisan import:csv app/public/rodovias.csv
-    php artisan import:csv app/public/uf.csv
+    php artisan import:rodovias
+    php artisan import:uf
     ```
 7. **Executando o Projeto**
 
