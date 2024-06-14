@@ -20,9 +20,10 @@ Antes de iniciar, certifique-se de ter instalado em seu sistema:
 
 2. **Clonar e Instalar Dependências**:
    Abra o terminal, navegue até a pasta criada e execute os seguintes comandos para instalar as dependências necessárias:
-
+    ```sh
    composer install # Instala as dependências do PHP
    npm install # Instala as dependências do Node.js
+    ```
 
 3. **Configuração do Ambiente:**
    Configure o arquivo .env na raiz do projeto com as informações do seu banco de dados:
