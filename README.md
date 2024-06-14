@@ -1,6 +1,6 @@
 # Geo localização
 
-# Sistema de Rotas com Vue.js e Laravel
+# Sistema de Rotas com Vue 3 e Laravel 9.x 
 
 Este projeto utiliza Vue.js e Laravel para criar um sistema de gerenciamento de rotas.
 
@@ -8,7 +8,7 @@ Este projeto utiliza Vue.js e Laravel para criar um sistema de gerenciamento de 
 
 Antes de iniciar, certifique-se de ter instalado em seu sistema:
 
-- PHP
+- PHP (Minimo 8.0)
 - Composer
 - Node.js e npm
 - Um servidor local como XAMPP ou WampServer
