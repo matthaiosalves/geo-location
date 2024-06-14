@@ -46,14 +46,16 @@ Antes de iniciar, certifique-se de ter instalado em seu sistema:
 
 5. **Importar Dados CSV:**
    Antes de importar dados de arquivos CSV, instale a biblioteca league/csv:
+    ```sh
    composer require league/csv
+    ```
 
     Em seguida, execute os comandos para importar os dados para o banco de dados:
     ```sh
     php artisan import:csv app/public/rodovias.csv
     php artisan import:csv app/public/uf.csv
     ```
-6. **Executando o Projeto**
+7. **Executando o Projeto**
 
    Servidor de Desenvolvimento:
    Para iniciar o servidor Laravel:
