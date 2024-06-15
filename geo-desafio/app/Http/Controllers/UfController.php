@@ -12,6 +12,6 @@ class UfController extends Controller
     public function index()
     {
         $ufs = Uf::all();
-        return Inertia::render('Welcome', ['ufs' => $ufs]);
+        return Inertia::render('Dashboard', ['ufs' => $ufs]);
     }
 }
