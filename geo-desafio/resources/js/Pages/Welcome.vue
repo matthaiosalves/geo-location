@@ -122,7 +122,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="trecho in trechos" :key="trecho.id">
+                            <tr
+                                v-for="(
+                                    trecho, index
+                                ) in verificarToggleMostrarTrechosRegistrados"
+                                :key="trecho.id"
+                            >
                                 <td>{{ trecho.id }}</td>
                                 <td>
                                     {{ formatarData(trecho.data_referencia) }}
@@ -152,6 +157,15 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    <div class="row justify-content-center align-items-center">
+                        <button
+                            class="btn btn-primary"
+                            @click="toggleMostrarTrechosRegistrados"
+                        >
+                            {{ mostrarTodos ? "Ver menos" : "Ver mais" }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -199,6 +213,7 @@ export default {
             rodovias: [],
             trechos: [],
             map: null,
+            mostrarTodos: false,
         };
     },
     computed: {
@@ -218,6 +233,10 @@ export default {
                 this.form.kmInicial &&
                 this.form.kmFinal
             );
+        },
+
+        verificarToggleMostrarTrechosRegistrados() {
+            return this.mostrarTodos ? this.trechos : this.trechos.slice(0, 3);
         },
     },
     methods: {
@@ -325,7 +344,7 @@ export default {
                     .then((response) => {
                         alert("Trecho excluído com sucesso!");
                         this.trechos = this.trechos.filter((t) => t.id !== id);
-                        this.atualizarMapa();
+                        // this.atualizarMapa();
                     })
                     .catch((error) => {
                         console.error(
@@ -387,10 +406,17 @@ export default {
             const dia = novaData.getDate().toString().padStart(2, "0");
             return `${dia}-${mes}-${ano}`;
         },
+
+        toggleMostrarTrechosRegistrados() {
+            this.mostrarTodos = !this.mostrarTodos;
+        },
     },
     props: {
         ufs: {
             type: Array,
+        },
+        index: {
+            type: Number,
         },
     },
     created() {
