@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Uf;
 use App\Models\Rodovia;
 use App\Models\Trecho;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 
 class DadosController extends Controller
